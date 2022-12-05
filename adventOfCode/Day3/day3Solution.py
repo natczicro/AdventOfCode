@@ -3,8 +3,6 @@ import string
 
 file1=open('input', 'r')
 linesFromFile=file1.readlines()
-priorityList=list(string.ascii_letters)
-priorityString=''.join(priorityList)
 
 totalPriority=0
 
@@ -14,18 +12,42 @@ def splitRucksackInHalf(rucksack):
   secondCompartment = lines[slice(sizeOfRucksack//2,sizeOfRucksack)]
   return(firstCompartment,secondCompartment)
 
-def findCommonCharacter(stringOne,stringTwo):
+def findCommonCharacters(stringOne,stringTwo):
   setForComparison = set(stringOne)
-  commonCharacter=(setForComparison.intersection(secondCompartment)).pop()
-  return(commonCharacter)
+  commonCharacters=(setForComparison.intersection(stringTwo))
+  return(commonCharacters)
   
+def calculateLetterPriority(letter):
+  priorityList=list(string.ascii_letters)
+  priorityString=''.join(priorityList)
+  priorityRegexSearch=re.search(letter, priorityString)
+  priority=priorityRegexSearch.start()+1
+  return priority
 
 for lines in linesFromFile:
   [firstCompartment,secondCompartment]=splitRucksackInHalf(lines)
-  commonCharacter=findCommonCharacter(firstCompartment,secondCompartment)
+  commonCharacters=findCommonCharacters(firstCompartment,secondCompartment)
   
-  priorityRegexSearch=re.search(commonCharacter, priorityString)
-  priority=priorityRegexSearch.start()
-  totalPriority=totalPriority+int(priority)+1
+  priority=calculateLetterPriority(commonCharacters.pop())
+  totalPriority=totalPriority+int(priority)
 
 print(totalPriority)
+
+badgePriority=0
+
+for i, lines in enumerate(linesFromFile):
+  if i ==0 or i%3==0:
+    firstElf=lines.strip()
+  elif i==1 or i%3==1:
+    secondElf=lines.strip()
+  else:
+    thirdElf=lines.strip()
+    firstCommon=findCommonCharacters(firstElf,secondElf)
+    finalCommon=findCommonCharacters(firstCommon,thirdElf)
+    badge=finalCommon.pop()
+    priority=calculateLetterPriority(badge)
+    badgePriority=badgePriority+priority
+
+print(badgePriority)
+    
+  
