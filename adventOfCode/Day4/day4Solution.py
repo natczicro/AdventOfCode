@@ -35,7 +35,6 @@ for lines in linesFromFile:
   partialOverlap = not usefulElves
   partiallyRedundantElves=partiallyRedundantElves+partialOverlap
 
-print(totallyRedundantElves)
-print(partiallyRedundantElves)
-
-  
+print('Total number of elves: ', len(linesFromFile))
+print('Number of elves doing absolutely nothing: ',totallyRedundantElves)
+print('Number of elves not pulling their full weight: ', partiallyRedundantElves)
