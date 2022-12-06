@@ -1,46 +1,76 @@
-import numpy as np
 import re
 
 file1=open('input', 'r')
 linesFromFile=file1.readlines()
 
-crateList=[]
 
 def buildCrateStack(position, crateLines):
-  print('may use')
   crateList=[]
   for i in reversed(range(len(crateLines))):
     entireLine=crateLines[i]
 
     crate=entireLine[position]
     if crate==' ':
-      print('stack done')
       break
     crateList.append(crate)
-  print(crateList)
   return(crateList)
     
-  
+def performCrateMove(move,crateArray):
+  numbersInLine=re.findall(r"[0-9]+",move)
 
-for i, lines in enumerate(linesFromFile):  
-  if lines=='\n':
-    print('reached empty line')
-    headerLine=i-1
-    break
+  for k in range(int(numbersInLine[0])):
+    #print(k)
+    crateInCrane=crateArray[int(numbersInLine[1])-1].pop()
+    crateArray[int(numbersInLine[2])-1].append(crateInCrane)
 
-crateLines = linesFromFile[0:headerLine]
-for lines in crateLines:
-  print(lines)
-numbers=re.findall(r"[1-9]",linesFromFile[headerLine])
-print(numbers)
-print(numbers[0])
-position=re.search(numbers[0],linesFromFile[headerLine]).start()
-print(position)
-crateArrayList=[]
-for j in range(len(numbers)):
-  position=re.search(numbers[j],linesFromFile[headerLine]).start()
-  crateArrayList.append(buildCrateStack(position,crateLines))
-#listOne=buildCrateStack(position,crateLines)
+  return(crateArray)
 
-print(crateArrayList[0])
-print(crateArrayList[1])
+def performSuperCrateMove(moves,altcrateArray):
+  numbersInLines=re.findall(r"[0-9]+",moves)
+
+  firstStack=altcrateArray[(int(numbersInLines[1])-1)]
+  secondStack=altcrateArray[(int(numbersInLines[2])-1)]
+
+  startSlice=-int(numbersInLines[0])
+  cratesToMove=firstStack[startSlice:]
+
+  firstStack=firstStack[:startSlice]
+  secondStack=secondStack+cratesToMove
+
+  altcrateArray[(int(numbersInLines[1])-1)]=firstStack
+  altcrateArray[(int(numbersInLines[2])-1)]=secondStack
+  return(altcrateArray)
+
+
+def main():
+  print("running program")
+  for i, lines in enumerate(linesFromFile):  
+    if lines=='\n':
+      headerLine=i-1
+      break
+
+  crateLines = linesFromFile[0:headerLine]
+  instructionLines = linesFromFile[headerLine+2:]
+
+  numbers=re.findall(r"[0-9]",linesFromFile[headerLine])
+
+  crateArrayList=[]
+  for j in range(len(numbers)):
+    position=re.search(numbers[j],linesFromFile[headerLine]).start()
+    crateArrayList.append(buildCrateStack(position,crateLines))
+
+  for items in crateArrayList:
+    print(items[-1])
+  secondCrateArrayList=crateArrayList
+
+  for lines in instructionLines:
+    #crateArrayList=performCrateMove(lines,crateArrayList)
+    secondCrateArrayList=performSuperCrateMove(lines,secondCrateArrayList)
+
+  for items in crateArrayList:
+    print(items[-1])
+
+  for items in secondCrateArrayList:
+    print(items[-1])
+
+main()
