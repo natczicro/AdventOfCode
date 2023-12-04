@@ -17,7 +17,6 @@ def returnIndicesOfSymbols(lineString):
   symbolIndicesList = []
   symbolIndices= re.finditer(r'[^.\d\n]',lineString)
   for index in symbolIndices:
-    #print(index.group())
     indices = range(index.span()[0]-1, index.span()[1]+1)
     symbolIndicesList.append(indices)
   return symbolIndicesList
@@ -27,7 +26,6 @@ def returnIndicesOfGears(lineString):
   symbolIndicesList = []
   symbolIndices= re.finditer(r'[*]',lineString)
   for index in symbolIndices:
-    #print(index.group())
     indices = range(index.span()[0]-1, index.span()[1]+1)
     symbolIndicesList.append(indices)
   return symbolIndicesList
@@ -36,13 +34,9 @@ def compareIndices(listOfIndicesNumbers, listOfIndicesSymbols,lines,runningTotal
   innerTotal = 0
   for numbers in listOfIndicesNumbers:
     for symbols in listOfIndicesSymbols:
-      xs = set(symbols)
-    
+      xs = set(symbols) 
       overlap = xs.intersection(numbers)
       if overlap:
-        #print("range", numbers)
-        #print("elements in range are: ",numbers[0],numbers[-1])
-        #print("number in row is :",lines[numbers[0]:numbers[-1]+1])
         partNumber = lines[numbers[0]:numbers[-1]+1]
         innerTotal += int(partNumber)
   return innerTotal
@@ -50,50 +44,36 @@ def compareIndices(listOfIndicesNumbers, listOfIndicesSymbols,lines,runningTotal
 def lookForGearValue(numberIndex, gear,lines):
   gearValue = None
   gearValue2 = None
-  #print("testing stuff")
-  #print(gear)
-  #print(lineToCheck)
   for numbers in numberIndex:
     xs = set(numbers)
     overlap = xs.intersection(gear)
     if overlap:
-      #print("range", numbers)
-      #print("elements in range are: ",numbers[0],numbers[-1])
-      #print("number in row is :",lines[numbers[0]:numbers[-1]+1])
       if gearValue:
         gearValue2=gearValue
       gearValue=int(lines[numbers[0]:numbers[-1]+1])
-      #print("singleGearValue is :", gearValue)
   if gearValue2 is not None:
+    #Return a tuple when two gear values are returned
     return gearValue,gearValue2
   if gearValue is not None:
     return gearValue
         
   
-  
-safeNumbers = 0
 previousLine = linesFromFile[0]
 
 answerTotal = 0
 #Part One
 for lines in linesFromFile:
-  #print("Different Line")
-  #print(answerTotal)
   previousNumbers = returnIndicesOfNumbers(previousLine)
   previousSymbols = returnIndicesOfSymbols(previousLine)
 
   numbers = returnIndicesOfNumbers(lines)
   symbols = returnIndicesOfSymbols(lines)
-  #print("Comparison with between previous line numbers and current line symbols")
+  #print("Comparison  between previous line numbers and current line symbols")
   answerTotal += compareIndices(previousNumbers,symbols,previousLine,answerTotal)
-  #print("Comparison with previous line symbols and current line numbers")
+  #print("Comparison  previous line symbols and current line numbers")
   answerTotal += compareIndices(numbers,previousSymbols,lines,answerTotal)
-  #print("Comparison with current line symbols and current line numbers")
+  #print("Comparison  current line symbols and current line numbers")
   answerTotal += compareIndices(numbers,symbols,lines,answerTotal)
-
-
-  #print(previousSymbols)
-  safeNumbers +=1
 
   previousLine = lines
 
@@ -115,34 +95,26 @@ for lines in linesFromFile[2:]:
   lineToCheck = [previousPreviousLine,previousLine,lines]
   
   gears = returnIndicesOfGears(previousLine)
-  #print("New set of gears:", gears)
   for gear in gears:
     #print(gear)
     gearValue = []
     for i in range(3):
-      #print(numberIndexes[i])
-      #print(lineToCheck[i])
       gearValueTemp = lookForGearValue(numberIndexes[i], gear, lineToCheck[i])
       if not gearValueTemp is None:
         gearValue.append(gearValueTemp)
-        #print("gear value is: ",gearValue)
-        #print(type(gearValue[0]))
         res = type(gearValue[0]) is tuple
+        #Need to catch case where gears are on the same line and create a tuple
         if res:
-          #print(gearValue[0][0], gearValue[0][1])
           gearRatioCurrent=gearValue[0][0]*gearValue[0][1]
-          #print("Gear ratio found to be :", gearRatioCurrent)
           gearRatioTotal += gearRatioCurrent
           break
 
       if len(gearValue)==2:
         gearRatioCurrent = gearValue[0]*gearValue[1]
-        #print("Gear ratio found to be :", gearRatioCurrent)
         gearRatioTotal += gearRatioCurrent
         break
   
   previousPreviousLine = previousLine
   previousLine = lines
-  safeNumbers +=1
 
 print("Answer Part 2:", gearRatioTotal)
