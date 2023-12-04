@@ -1,56 +1,148 @@
 import re
-import numpy as np
 
 file1 = open('input', 'r')
 linesFromFile = file1.readlines()
 
-def returnIndicesOfNumbers(string):
-
-def returnIndicesOfSymbols(string):
-
-def compareIndices(listOfIndicesOne, listOfIndicesTwo):
-
-def compareIndicesOnSameLine
-
-for lines in linesFromFile:
-  previousNumberIndicesList = []
-  previousNumberList = []
-
-  previousSymbolIndicesList = []
-  previousSymbolList = []
-
+def returnIndicesOfNumbers(lineString):
+#Feed it a string return a list of the start and end position of the numbers in the line
+  numberIndicesList = []
+  numberIndices= re.finditer(r"\d+", lineString)
+  for index in numberIndices:
+    indices = range(index.span()[0], index.span()[1])
+    numberIndicesList.append(indices)
+  return numberIndicesList
   
-  previousLine = lines
-  previousLineItems = re.findall(r'\d+|[^.\d+\n]', previousLine)
-  previousNumberIndices = re.finditer(r"\d+", previousLine)
-  previousSymbolIndices = re.finditer(r'[^.\d+\n]',previousLine)
-  for index in previousNumberIndices:
-    indices = [index.span()[0], index.span()[1]]
-    previousNumberIndicesList.append(indices)
-    previousNumberList.append(index.group(0))
+def returnIndicesOfSymbols(lineString):
+#Feed  a string return a list of the start and end position of the symbols in the line
+  symbolIndicesList = []
+  symbolIndices= re.finditer(r'[^.\d\n]',lineString)
+  for index in symbolIndices:
+    #print(index.group())
+    indices = range(index.span()[0]-1, index.span()[1]+1)
+    symbolIndicesList.append(indices)
+  return symbolIndicesList
 
-  print(previousNumberIndicesList)
-  print(previousNumberList)
-  
-  currentLineItems = re.findall(r'\d+|[^.\d+\n]', lines)
-  currentNumberIndices = re.finditer(r"\d+", lines)
-  currentSymbolIndices = re.finditer(r'[^.\d+\n]',lines)
-  for index in previousNumberIndices:
-    indices = [index.span()[0], index.span()[1]]
-    previousNumberIndicesList.append(indices)
-    previousNumberList.append(index.group(0))
-  #print(previousLineItems)
-  #print(currentLineItems)
-  
-  numberIndices = re.finditer(r"\d+", lines)
-  '''
-  for matches in numberIndices:
-    print(lines[matches.span()[0]:matches.span()[1]])
+def returnIndicesOfGears(lineString):
+  #Feed  a string return a list of the start and end position of the symbols in the line
+  symbolIndicesList = []
+  symbolIndices= re.finditer(r'[*]',lineString)
+  for index in symbolIndices:
+    #print(index.group())
+    indices = range(index.span()[0]-1, index.span()[1]+1)
+    symbolIndicesList.append(indices)
+  return symbolIndicesList
     
-    #print(lines[matches.span(0):matches.span(1)])
-    #print(type(matches.span()))
+def compareIndices(listOfIndicesNumbers, listOfIndicesSymbols,lines,runningTotal):
+  innerTotal = 0
+  for numbers in listOfIndicesNumbers:
+    for symbols in listOfIndicesSymbols:
+      xs = set(symbols)
+    
+      overlap = xs.intersection(numbers)
+      if overlap:
+        #print("range", numbers)
+        #print("elements in range are: ",numbers[0],numbers[-1])
+        #print("number in row is :",lines[numbers[0]:numbers[-1]+1])
+        partNumber = lines[numbers[0]:numbers[-1]+1]
+        innerTotal += int(partNumber)
+  return innerTotal
+  
+def lookForGearValue(numberIndex, gear,lines):
+  gearValue = None
+  gearValue2 = None
+  #print("testing stuff")
+  #print(gear)
+  #print(lineToCheck)
+  for numbers in numberIndex:
+    xs = set(numbers)
+    overlap = xs.intersection(gear)
+    if overlap:
+      #print("range", numbers)
+      #print("elements in range are: ",numbers[0],numbers[-1])
+      #print("number in row is :",lines[numbers[0]:numbers[-1]+1])
+      if gearValue:
+        gearValue2=gearValue
+      gearValue=int(lines[numbers[0]:numbers[-1]+1])
+      #print("singleGearValue is :", gearValue)
+  if gearValue2 is not None:
+    return gearValue,gearValue2
+  if gearValue is not None:
+    return gearValue
+        
+  
+  
+safeNumbers = 0
+previousLine = linesFromFile[0]
 
-  symbolIndices = re.finditer(r'[^.\d+\n]',lines)
-  for matches in symbolIndices:
-    print(matches.span())
-'''
+answerTotal = 0
+#Part One
+for lines in linesFromFile:
+  #print("Different Line")
+  #print(answerTotal)
+  previousNumbers = returnIndicesOfNumbers(previousLine)
+  previousSymbols = returnIndicesOfSymbols(previousLine)
+
+  numbers = returnIndicesOfNumbers(lines)
+  symbols = returnIndicesOfSymbols(lines)
+  #print("Comparison with between previous line numbers and current line symbols")
+  answerTotal += compareIndices(previousNumbers,symbols,previousLine,answerTotal)
+  #print("Comparison with previous line symbols and current line numbers")
+  answerTotal += compareIndices(numbers,previousSymbols,lines,answerTotal)
+  #print("Comparison with current line symbols and current line numbers")
+  answerTotal += compareIndices(numbers,symbols,lines,answerTotal)
+
+
+  #print(previousSymbols)
+  safeNumbers +=1
+
+  previousLine = lines
+
+
+print("Answer Part One:", answerTotal)
+
+
+#Part Two
+previousLine = linesFromFile[1]
+previousPreviousLine = linesFromFile[0]
+gearRatioTotal = 0
+safeNumbers = 0
+for lines in linesFromFile[2:]:
+  previousPreviousNumbers = returnIndicesOfNumbers(previousPreviousLine)
+  previousNumbers = returnIndicesOfNumbers(previousLine)
+  numbers = returnIndicesOfNumbers(lines)
+
+  numberIndexes = [previousPreviousNumbers, previousNumbers,numbers]
+  lineToCheck = [previousPreviousLine,previousLine,lines]
+  
+  gears = returnIndicesOfGears(previousLine)
+  #print("New set of gears:", gears)
+  for gear in gears:
+    #print(gear)
+    gearValue = []
+    for i in range(3):
+      #print(numberIndexes[i])
+      #print(lineToCheck[i])
+      gearValueTemp = lookForGearValue(numberIndexes[i], gear, lineToCheck[i])
+      if not gearValueTemp is None:
+        gearValue.append(gearValueTemp)
+        #print("gear value is: ",gearValue)
+        #print(type(gearValue[0]))
+        res = type(gearValue[0]) is tuple
+        if res:
+          #print(gearValue[0][0], gearValue[0][1])
+          gearRatioCurrent=gearValue[0][0]*gearValue[0][1]
+          #print("Gear ratio found to be :", gearRatioCurrent)
+          gearRatioTotal += gearRatioCurrent
+          break
+
+      if len(gearValue)==2:
+        gearRatioCurrent = gearValue[0]*gearValue[1]
+        #print("Gear ratio found to be :", gearRatioCurrent)
+        gearRatioTotal += gearRatioCurrent
+        break
+  
+  previousPreviousLine = previousLine
+  previousLine = lines
+  safeNumbers +=1
+
+print("Answer Part 2:", gearRatioTotal)
