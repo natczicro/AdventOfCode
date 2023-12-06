@@ -72,21 +72,27 @@ print("--- %s seconds ---" % (time.time() - start_time))
 import numpy as np
 
 def refinedFindDestinationFromSource(source,map):
-  
-  rows = np.logical_and((map[:,1] <= source),((map[:,2]+map[:,1]) >=source))
-  difference = source-map[rows,1]
-  destination = map[rows,0]+difference
+  rowcheck = np.where((map[:,1] <= source[0]))
+  rowcheck2 = np.where(((map[:,2]+map[:,1]) <= source[1]))
+  print(rowcheck, rowcheck2)
+  rows = np.logical_and((map[:,1] <= source[0]),((map[:,2]+map[:,1]) <= source[1]))
+  print(rows)
+  #difference = source-map[rows,1]
+  #destination = map[rows,0]+difference
   return destination
 
 seedsStart = [eval(i) for i in seeds[::2]]
 
 seedsRange = [eval(i) for i in seeds[1::2]]
 
-destinationForMin = findDestinationFromSource((seedsStart[0]),maps['seed-to-soil'])
-destinationForMax = findDestinationFromSource((seedsStart[0])+(seedsRange[0]),maps['seed-to-soil'])
+destinationForMin = findDestinationFromSource((seedsStart[1]),maps['seed-to-soil'])
+destinationForMiddle = findDestinationFromSource((seedsStart[1])+(seedsRange[1]),maps['seed-to-soil'])
+destinationForMax = findDestinationFromSource((seedsStart[1])+(seedsRange[1]),maps['seed-to-soil'])
 
-
-
+print("Checking Junk")
+print(destinationForMin)
+print(destinationForMiddle)
+print(destinationForMax)
 newMap = {'seed-to-soil':[],
        'soil-to-fertilizer':[],
        'fertilizer-to-water':[],
@@ -97,19 +103,35 @@ newMap = {'seed-to-soil':[],
 for keys in maps:
   newMap[keys] = np.array(maps[keys])
 
-
-refinedDestination = refinedFindDestinationFromSource((seedsStart[0]),newMap['seed-to-soil'])
-
 '''
+start_time = time.time()
+for i in range(1,1000):
+  oldDestination = findDestinationFromSource((seedsStart[0]),maps['seed-to-soil'])
+print("--- %s seconds ---" % (time.time() - start_time))
+
+start_time = time.time()
+for i in range(1,1000):
+  refinedDestination = refinedFindDestinationFromSource((seedsStart[0]),newMap['seed-to-soil'])
+print("--- %s seconds ---" % (time.time() - start_time))
+'''
+
+#refinedDestination = refinedFindDestinationFromSource([seedsStart[0],seedsStart[0]+seedsRange[0]],newMap['seed-to-soil'])
+
+
 minimumEndLocation = None
-for startingSeed in tqdm(range(seedsStart[0],seedsStart[0]+seedsRange[0])):
-  destination = startingSeed
-  for keys in newMap:
-    destination = refinedFindDestinationFromSource(destination,newMap[keys])
-    if minimumEndLocation is None:
-      minimumEndLocation = destination
-    else:
-      minimumEndLocation = min(minimumEndLocation,destination)
-print(minimumEndLocation)
-'''
+print("starting Brute Force method \n\n")
+for i in range(len(seedsStart)):
+
+  for startingSeed in tqdm(range(seedsStart[i],seedsStart[i]+seedsRange[i])):
+    destination = startingSeed
+    for keys in maps:
+      destination = findDestinationFromSource(destination,maps[keys])
+      if minimumEndLocation is None:
+        minimumEndLocation = destination
+      else:
+        minimumEndLocation = min(minimumEndLocation,destination)
+  print(f'After seed: {seedsStart[i]} the minimum is still {minimumEndLocation}')
+
+
+
 #print(newMap)
