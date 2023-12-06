@@ -121,15 +121,15 @@ print("--- %s seconds ---" % (time.time() - start_time))
 minimumEndLocation = None
 print("starting Brute Force method \n\n")
 for i in range(len(seedsStart)):
-
+  print(f'working on seed: {seedsStart[i]}')
   for startingSeed in tqdm(range(seedsStart[i],seedsStart[i]+seedsRange[i])):
     destination = startingSeed
     for keys in maps:
       destination = findDestinationFromSource(destination,maps[keys])
-      if minimumEndLocation is None:
-        minimumEndLocation = destination
-      else:
-        minimumEndLocation = min(minimumEndLocation,destination)
+    if minimumEndLocation is None:
+      minimumEndLocation = destination
+    else:
+      minimumEndLocation = min(minimumEndLocation,destination)
   print(f'After seed: {seedsStart[i]} the minimum is still {minimumEndLocation}')
 
 
