@@ -1,5 +1,4 @@
 import time
-start_time = time.time()
 
 file1 = open('input', 'r')
 linesFromFile = file1.readlines()
@@ -23,7 +22,7 @@ def findDestinationFromSource(source,map):
 
   return int(source)
 
-
+start_time = time.time()
 #Part One
 for lines in linesFromFile:
 
@@ -54,21 +53,11 @@ for lines in linesFromFile:
     currentMap = 'temperature-to-humidity'
   elif lines.startswith('humidity-'):
     currentMap = 'humidity-to-location'
-'''
-print("testing below")
-print("destination",findDestinationFromSource(seeds[1],maps['seed-to-soil']))
-print("testing above")
 
-print(seeds)
-
-print(maps['seed-to-soil'][0])
-'''
 end_location = []
 for items in seeds:
-  #print("initial seed",items)
   destination = int(items)
   for keys in maps:
-    #print("current values and key",destination, keys, maps[keys],"\n")
     destination = findDestinationFromSource(destination,maps[keys])
   end_location.append(destination)
 
@@ -77,23 +66,27 @@ print("End locations are",end_location)
 print("minimum is", min(end_location))
 print("--- %s seconds ---" % (time.time() - start_time))
 
-seeds2 = seeds[::2]
 
-seeds3 = seeds[1::2]
+#Part Two
+seedsStart = [eval(i) for i in seeds[::2]]
 
-print(seeds2)
+seedsRange = [eval(i) for i in seeds[1::2]]
 
-print(seeds3)
+destinationForMin = findDestinationFromSource((seedsStart[0]),maps['seed-to-soil'])
 
-possible_ends=[]
-start_time = time.time()
-print(int(seeds2[0]), int(seeds3[0]))
+destinationForMax = findDestinationFromSource((seedsStart[0])+(seedsRange[0]),maps['seed-to-soil'])
 
-for i in range(int(seeds2[0]),int(seeds2[0])+int(seeds3[0])):
-  jake =i+i
+rangeToTest = range(seedsStart[0],seedsStart[0]+seedsRange[0])
+setRangeToTest = set(rangeToTest)
+print("reached")
+for items in maps['seed-to-soil']:
+  sourceStart = int(items[1])
+  sourceEnd = int(items[1])+int(items[2])
+  sourceRange = range(sourceStart, sourceEnd)
+  #overlap = setRangeToTest.intersection(sourceRange)
+  #print("overlap = ",overlap)
+
   
-print("--- %s seconds ---" % (time.time() - start_time))
 
-print("Done",jake)
-
-print("difference is going to be ", abs(int(min(seeds2))-int(max(seeds2))))
+  
+print(destinationForMin, destinationForMax)
