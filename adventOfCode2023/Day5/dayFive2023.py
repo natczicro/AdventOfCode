@@ -1,5 +1,5 @@
 import time
-
+from tqdm import tqdm
 file1 = open('input', 'r')
 linesFromFile = file1.readlines()
 
@@ -35,6 +35,7 @@ for lines in linesFromFile:
   if not currentMap is None and not lines.startswith('\n'):
     numbers,_ = lines.split('\n')
     mappings = numbers.split(' ')
+    mappings = [eval(i) for i in mappings]
     maps[currentMap].append(mappings)
     
   if lines.startswith('\n'):
@@ -68,25 +69,47 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 
 #Part Two
+import numpy as np
+
+def refinedFindDestinationFromSource(source,map):
+  
+  rows = np.logical_and((map[:,1] <= source),((map[:,2]+map[:,1]) >=source))
+  difference = source-map[rows,1]
+  destination = map[rows,0]+difference
+  return destination
+
 seedsStart = [eval(i) for i in seeds[::2]]
 
 seedsRange = [eval(i) for i in seeds[1::2]]
 
 destinationForMin = findDestinationFromSource((seedsStart[0]),maps['seed-to-soil'])
-
 destinationForMax = findDestinationFromSource((seedsStart[0])+(seedsRange[0]),maps['seed-to-soil'])
 
-rangeToTest = range(seedsStart[0],seedsStart[0]+seedsRange[0])
-setRangeToTest = set(rangeToTest)
-print("reached")
-for items in maps['seed-to-soil']:
-  sourceStart = int(items[1])
-  sourceEnd = int(items[1])+int(items[2])
-  sourceRange = range(sourceStart, sourceEnd)
-  #overlap = setRangeToTest.intersection(sourceRange)
-  #print("overlap = ",overlap)
 
-  
 
-  
-print(destinationForMin, destinationForMax)
+newMap = {'seed-to-soil':[],
+       'soil-to-fertilizer':[],
+       'fertilizer-to-water':[],
+       'water-to-light':[],
+       'light-to-temperature':[],
+       'temperature-to-humidity':[],
+       'humidity-to-location':[]}
+for keys in maps:
+  newMap[keys] = np.array(maps[keys])
+
+
+refinedDestination = refinedFindDestinationFromSource((seedsStart[0]),newMap['seed-to-soil'])
+
+'''
+minimumEndLocation = None
+for startingSeed in tqdm(range(seedsStart[0],seedsStart[0]+seedsRange[0])):
+  destination = startingSeed
+  for keys in newMap:
+    destination = refinedFindDestinationFromSource(destination,newMap[keys])
+    if minimumEndLocation is None:
+      minimumEndLocation = destination
+    else:
+      minimumEndLocation = min(minimumEndLocation,destination)
+print(minimumEndLocation)
+'''
+#print(newMap)
