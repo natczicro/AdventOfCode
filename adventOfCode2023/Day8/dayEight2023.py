@@ -1,7 +1,7 @@
 file1 = open('input', 'r')
 linesFromFile = file1.readlines()
 
-print(linesFromFile[0])
+#print(linesFromFile[0])
 route,_=linesFromFile[0].split('\n')
 route = [*route]
 #print(route)
@@ -32,7 +32,7 @@ from itertools import cycle
 pool = cycle(route)
 
 
-nextStart = 'AAA'
+nextStart = 'AAA' #Starting position
 
 for steps, directions in enumerate(pool):
   #print(nextStart, directions)
@@ -42,10 +42,49 @@ for steps, directions in enumerate(pool):
     break
   nextStart = followMap(directions, nextStart, dict)
 
-
-
-
-#stepsRequired = steps+1
-
 print("Number of steps required = ", steps)
 
+#Part Two
+  
+#Find entries that end in A
+startPoints = list(key for key in dict.keys() if key.endswith("A"))
+endPoints = list(key for key in dict.keys() if key.endswith("Z"))
+
+print(startPoints, endPoints)
+print("Starting Part Two")
+input()
+match = None
+for steps, directions in enumerate(pool):
+  print("Different Step")
+  print(type(startPoints[0]))
+  print(directions)
+  input()
+  '''
+  if steps % 100 ==0:
+    print(steps)
+    print(startPoints)
+    input()
+  '''
+  '''
+  for start in startPoints:
+    print(f'start is {start}')
+    if start.endswith("Z"):
+      print(startPoints)
+      print(start)
+      input()
+      match = True
+    else:
+      print("Not perfect match")
+      match = False
+      break
+  if match == True:
+    break
+  '''
+  for count,points in enumerate(startPoints):
+    nextStart = followMap(directions, nextStart, dict)
+    print(f'Assigning {nextStart} to {startPoints[count]}')
+    startPoints[count]=nextStart
+    if startPoints[count].endswith('Z'):
+      input()
+
+print("Part Two Steps = ", steps)
