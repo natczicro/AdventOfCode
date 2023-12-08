@@ -52,21 +52,27 @@ endPoints = list(key for key in dict.keys() if key.endswith("Z"))
 
 print(startPoints, endPoints)
 print("Starting Part Two")
-input()
-match = None
-for steps, directions in enumerate(pool):
-  allmatch = True
-  for count,points in enumerate(startPoints):
-    nextStart = followMap(directions, points, dict)
-    #print(f'Assigning {nextStart} to {startPoints[count]}')
-    startPoints[count]=nextStart
-    if startPoints[count].endswith('Z'):
-      print(f'All elements are {startPoints}')
-      print(f'Element {startPoints[count]} ends with Z')
-    else:
-      allmatch = False
 
-  if allmatch:
-    break
+def findZInterval(startPoint, pool, map):
+  firstZ = False
+  for steps, directions in enumerate(pool):
+    if startPoint.endswith('Z'):
+      if firstZ:
+        break
+      firstZ = True
+      firstZLocation = steps
+    startPoint = followMap(directions, startPoint, map)
+  return steps - firstZLocation
 
-print("Part Two Steps = ", steps)
+intervals = []
+for items in startPoints:
+  
+  ZInterval = findZInterval(items, pool, dict)
+  intervals.append(ZInterval)
+
+from math import gcd
+print(intervals)
+lcm = 1
+for i in intervals:
+    lcm = lcm*i//gcd(lcm, i)
+print(lcm)
