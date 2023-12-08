@@ -55,36 +55,18 @@ print("Starting Part Two")
 input()
 match = None
 for steps, directions in enumerate(pool):
-  print("Different Step")
-  print(type(startPoints[0]))
-  print(directions)
-  input()
-  '''
-  if steps % 100 ==0:
-    print(steps)
-    print(startPoints)
-    input()
-  '''
-  '''
-  for start in startPoints:
-    print(f'start is {start}')
-    if start.endswith("Z"):
-      print(startPoints)
-      print(start)
-      input()
-      match = True
-    else:
-      print("Not perfect match")
-      match = False
-      break
-  if match == True:
-    break
-  '''
+  allmatch = True
   for count,points in enumerate(startPoints):
-    nextStart = followMap(directions, nextStart, dict)
-    print(f'Assigning {nextStart} to {startPoints[count]}')
+    nextStart = followMap(directions, points, dict)
+    #print(f'Assigning {nextStart} to {startPoints[count]}')
     startPoints[count]=nextStart
     if startPoints[count].endswith('Z'):
-      input()
+      print(f'All elements are {startPoints}')
+      print(f'Element {startPoints[count]} ends with Z')
+    else:
+      allmatch = False
+
+  if allmatch:
+    break
 
 print("Part Two Steps = ", steps)
