@@ -6,7 +6,6 @@ route,_=linesFromFile[0].split('\n')
 route = [*route]
 #print(route)
 
-exitCount = 0
 dict = {}
 for lines in linesFromFile[2:]:
   #print(lines)
@@ -21,29 +20,25 @@ for lines in linesFromFile[2:]:
   #dict[leftSide]['Left'] = left
   #dict[leftSide]['Right']= right
   #print(leftSide, left, right)
-  exitCount +=1
 
 #print(dict)
-print(list(dict.keys())[-1])
+#print(list(dict.keys())[-1])
 
 def followMap(direction, start, mapDictionary):
   nextStart = mapDictionary[start][direction]
   return nextStart
 
-exitCount = 0
-
 from itertools import cycle
-
-
 pool = cycle(route)
 
-nextStart = list(dict.keys())[0]
+
+nextStart = 'AAA'
 
 for steps, directions in enumerate(pool):
   #print(nextStart, directions)
       
   #print(steps)
-  if nextStart == 'LHK':
+  if nextStart == 'ZZZ':
     break
   nextStart = followMap(directions, nextStart, dict)
 
@@ -54,5 +49,3 @@ for steps, directions in enumerate(pool):
 
 print("Number of steps required = ", steps)
 
-print(len(route))
-print(len(linesFromFile))
