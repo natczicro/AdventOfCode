@@ -119,8 +119,11 @@ y2 = startingPoint[1][1]
 directionTwo = startingDirections[1]
 
 numberOfSteps = 1
-xValues = [x1]
-yValues = [y1]
+x1Values = [x1]
+y1Values = [y1]
+
+x2Values = [x2]
+y2Values = [y2]
 while pointsDontMatch:
   #move Direction One
   x1, y1, directionOne = moveThroughPipe(x1,y1,directionOne,linesFromFile)
@@ -129,8 +132,11 @@ while pointsDontMatch:
   x2, y2, directionTwo = moveThroughPipe(x2,y2,directionTwo,linesFromFile)
   #print(x2, y2, directionTwo)
   numberOfSteps +=1
-  xValues.append(x1)
-  yValues.append(y1)
+  x1Values.append(x1)
+  y1Values.append(y1)
+
+  x2Values.append(x2)
+  y2Values.append(y2)
   if x1==x2 and y1 == y2:
     pointsDontMatch= False
 
@@ -139,7 +145,59 @@ print(numberOfSteps)
 
 #Part Two
 import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.path as mplPath
+from shapely import geometry
+# plot
+# make data
 
-plt.plot(xValues,yValues)
+# plot
+fig, ax = plt.subplots()
 
+x2Values.reverse()
+y2Values.reverse()
+xValues = x1Values+x2Values
+yValues = y1Values+y2Values
+
+#ax.plot(x1Values, y1Values, linewidth=1.0)
+#ax.plot(x2Values, y2Values, linewidth=1.0)
+
+ax.plot(xValues, yValues)
+print("Plot 1")
 plt.show()
+#xValues = [eval(i) for i in xValues]
+#yValues = [eval(i) for i in yValues]
+
+xCoords = np.array(xValues)
+yCoords = np.array(yValues)
+xyCoords = (zip(xValues,yValues))
+#print(tuple(xyCoords))
+poly = geometry.Polygon(xyCoords)
+print("Plot Two")
+plt.plot(*poly.exterior.xy)
+plt.show()
+
+tilesInsideLoop = 0
+totalTiles = 0
+for lineNumber, lines in enumerate(linesFromFile):
+  ground = re.finditer(r'\.',lines)
+  for items in ground:
+    #print(lineNumber, items.start())
+    totalTiles +=1
+    groundLocation = geometry.Point(lineNumber, items.start())
+    if poly.contains(groundLocation):
+      tilesInsideLoop += 1
+  
+  otherPipes = re.finditer(r'[J\|F\-L7]',lines)
+  for items in otherPipes:
+    #print(items)
+    xyLocation = np.array([lineNumber,items.start()])
+    #print(xyLocation)
+    if xyLocation in tuple(xyCoords):
+      print("Part of the piping")
+    else:
+      groundLocation = geometry.Point(lineNumber, items.start())
+      if poly.contains(groundLocation):
+        tilesInsideLoop += 1
+
+print(f' {tilesInsideLoop} tiles are inside the loop out of {totalTiles} tiles')
