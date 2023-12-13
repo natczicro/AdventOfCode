@@ -1,8 +1,10 @@
-file1 = open('input', 'r')
+file1 = open('inputTest', 'r')
 linesFromFile = file1.readlines()
 import re
+import numpy as np
 
-print(len(linesFromFile))
+numpyArray = np.loadtxt('inputTest')
+
 insertionPoint = []
 for lineCounter, lines in enumerate(linesFromFile):
   
@@ -21,13 +23,18 @@ for lineCounter, lines in enumerate(linesFromFile):
     galaxyPositionY = lineCounter
     galaxyLocations.append([galaxyPositionX, galaxyPositionY])
     
-  
+print(len(galaxyLocations))
+
 galaxyPairs = [(a, b) for idx, a in enumerate(galaxyLocations) for b in galaxyLocations[idx + 1:]]
+print(len(galaxyPairs))
 
 totalShortestLength = 0
-for pairs in galaxyPairs:
-  print(pairs[0][1])
+for count, pairs in enumerate(galaxyPairs):
+  print(pairs)
   shortestLength = abs(pairs[0][0] - pairs[1][0]) + abs(pairs[0][1] - pairs[1][1])
+  print(shortestLength)
   totalShortestLength += shortestLength
+  print(totalShortestLength, count)
+  input()
 
 print(totalShortestLength)
