@@ -3,38 +3,39 @@ linesFromFile = file1.readlines()
 import re
 import numpy as np
 
-numpyArray = np.loadtxt('inputTest')
+newList = list(map(lambda x: x.replace('.', '0'), linesFromFile))
 
-insertionPoint = []
-for lineCounter, lines in enumerate(linesFromFile):
-  
-  temp = (re.search(r'#', lines))
-  if temp is None:
-    insertionPoint.append(lineCounter)
+newListAgain = []
+testArray = np.array([])
+count = 1
 
-for numbers in insertionPoint:
-  linesFromFile.insert(numbers,linesFromFile[numbers])
 
-galaxyLocations = []
 
-for lineCounter, lines in enumerate(linesFromFile):
-  for match in re.finditer(r'#', lines):
-    galaxyPositionX = match.span()[0]
-    galaxyPositionY = lineCounter
-    galaxyLocations.append([galaxyPositionX, galaxyPositionY])
-    
-print(len(galaxyLocations))
+for rowNumber, items in enumerate(newList):
+  try:
+    splitText,_ = items.split('\n')
+  except:
+    print("end of the stupid file")
+  #print(splitText)
+  splitText= re.sub(r'#', '1', splitText)
+  newListAgain.append([*splitText])
 
-galaxyPairs = [(a, b) for idx, a in enumerate(galaxyLocations) for b in galaxyLocations[idx + 1:]]
-print(len(galaxyPairs))
+#print(newListAgain)
+#newListAgain = [val for sublist in newListAgain for val in sublist]
+testArray = np.array(newListAgain,dtype='object')
 
-totalShortestLength = 0
-for count, pairs in enumerate(galaxyPairs):
-  print(pairs)
-  shortestLength = abs(pairs[0][0] - pairs[1][0]) + abs(pairs[0][1] - pairs[1][1])
-  print(shortestLength)
-  totalShortestLength += shortestLength
-  print(totalShortestLength, count)
-  input()
+rowsToAdd = []
+columnsToAdd = []
 
-print(totalShortestLength)
+testArray[testArray == '0'] = 0
+testArray[testArray == '1'] = 1
+
+print("Zero rows")
+zeroRows = (np.count_nonzero(testArray, axis = 0))
+print("Zero columns")
+zeroColumns = (np.count_nonzero(testArray, axis = 1))
+
+
+print(np.nonzero(testArray))
+print(testArray)
+print(testArray.shape)
