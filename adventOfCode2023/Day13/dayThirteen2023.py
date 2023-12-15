@@ -3,7 +3,7 @@ import numpy as np
 file1 = open('input', 'r')
 linesFromFile = file1.readlines()
 
-#print(linesFromFile)
+print(linesFromFile)
 
 
 def determineSymmetry(patternArray):
@@ -12,23 +12,29 @@ def determineSymmetry(patternArray):
     #print(previousRow)
     if rowNumber ==0:
       continue
-    print(row)
+    #print(row)
     if np.array_equal(patternArray[rowNumber], patternArray[rowNumber - 1]):
-      print("matching rows")
+      #print("matching rows")
       count=1
       symmetryFlag = True
       symmetryRow = [rowNumber]
       while (rowNumber - 1-count >= 0 and rowNumber + count < patternArray.shape[0]):
-        print("checking other lines for sym")
-        if np.array_equal(patternArray[rowNumber +count],
+        #print("checking other lines for sym")
+        #print(patternArray[rowNumber+count])
+        #print(patternArray[rowNumber-1-count])
+        if np.array_equal(patternArray[rowNumber+count],
                           patternArray[rowNumber -1-count]):
+          #print("Still symmetrical..")
           symmetryFlag = True
         else:
           symmetryFlag = False
-          print("mismatch in symm")
+          #print("mismatch in symm")
+          break
         count += 1
-  if symmetryFlag:
-    return symmetryRow
+        #print(count, patternArray.shape[0])
+      #return symmetryRow
+    if symmetryFlag:
+      return symmetryRow
 
 
 
@@ -48,24 +54,24 @@ def partOne():
   patternList = []
   summary = 0
   for rowNumber, items in enumerate(linesFromFile):
-    #print(items)
+    print(items)
     if items == '\n':  #Different pattern
       symmetryIndex = None
       patternArray = np.array(patternList)
       print(patternArray)
       #input()
-      print("checking rows")
+      #print("checking rows")
       symmetryIndex = determineSymmetry(patternArray)
       if symmetryIndex is not None:
-        print("symmetry row is ", symmetryIndex)
+        #print("symmetry row is ", symmetryIndex)
         axis = 0
         summary += determineSummary(symmetryIndex, axis)
       else:
-        print("checking columns")
+        #print("checking columns")
         patternArray = np.array(patternList).T
         symmetryIndex = determineSymmetry(patternArray)
         if symmetryIndex is not None:
-          print("symmetry column is ", symmetryIndex)
+          #print("symmetry column is ", symmetryIndex)
           axis = 1
           summary += determineSummary(symmetryIndex, axis)
       patternList = []
@@ -74,19 +80,21 @@ def partOne():
     if items.endswith('\n'):
       splitText, _ = items.split('\n')
       patternList.append([*splitText])
+      print("do we reach here?")
     else:
+      print("last line")
       symmetryIndex = None
       patternList.append([*items])
       patternArray = np.array(patternList)
       print(patternArray)
       #input()
-      print("checking rows")
+      #print("checking rows")
       symmetryIndex = determineSymmetry(patternArray)
       if symmetryIndex is not None:
         axis = 0
         summary += determineSummary(symmetryIndex, axis)
       else:
-        print("checking columns")
+        #print("checking columns")
         patternArray = np.array(patternList).T
         symmetryIndex = determineSymmetry(patternArray)
         if symmetryIndex is not None:
