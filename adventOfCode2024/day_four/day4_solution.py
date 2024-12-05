@@ -62,3 +62,41 @@ for i in range(xes_present):
     #input()
 
 print(total)
+
+#Part Two
+
+a_locations=(np.where(numpy_array=='A'))
+
+#print(x_locations[0][0],x_locations[1][0])
+
+#input()
+#print(np.size(x_locations))
+
+as_present = int(np.size(a_locations)/2)
+
+def search_around_a(start_x, start_y,numpy_array):
+    if start_y -1 <0:
+        return False
+    elif start_y + 1>=np.shape(numpy_array)[0]:
+        return False
+    elif start_x - 1<0:
+        return False
+    elif start_x + 1 >= np.shape(numpy_array)[1]:
+        return False
+    
+    if ((numpy_array[start_x+1][start_y+1] == 'M' and numpy_array[start_x-1][start_y-1] == 'S') or (numpy_array[start_x+1][start_y+1] == 'S' and numpy_array[start_x-1][start_y-1] == 'M'))\
+        and ((numpy_array[start_x-1][start_y+1]=='M' and numpy_array[start_x+1][start_y-1]=='S') or (numpy_array[start_x-1][start_y+1]=='S' and numpy_array[start_x+1][start_y-1]=='M')):
+            return True
+    else:
+        return False
+    
+total = 0
+for i in range(as_present):
+    #print(x_locations[0][i],x_locations[1][i])
+
+    total+=search_around_a(a_locations[0][i], a_locations[1][i],numpy_array)
+
+    #print(total)
+    #input()
+
+print(total)
