@@ -1,4 +1,10 @@
-file1 = open('sample.txt', 'r')
+import os
+
+run_python_from=os.path.dirname(__file__)
+
+
+print(run_python_from)
+file1 = open(os.path.join(run_python_from, 'day_five_input.txt'),'r')
 linesFromFile = file1.readlines()
 import numpy as np
 
@@ -28,12 +34,33 @@ for line in linesFromFile:
             line = list(map(int,line))
             pages_to_produce.append(line)
 
-print(rules)
+#print(rules)
 
-print(pages_to_produce)
+#print(pages_to_produce)
 
 rules_array = np.array(rules)
 
-def validate_rules(current_page, previous_pages):
+def validate_rules(current_page, previous_pages, rules_array):
     #Check if any of previous pages
-    print(np.where(rules_array[:,1]==13))
+    #print(np.where(rules_array[:,1]==current_page))
+    rule_hits = np.where(rules_array[:,0]==current_page)
+    for index in rule_hits[0]:
+        if rules_array[index,1] in previous_pages:
+            return False
+    
+    return True
+
+total = 0
+for entry in pages_to_produce:
+    previous_pages = []
+    entry_is_good = True
+    for page in entry:
+        if validate_rules(page, previous_pages, rules_array) is False:
+            entry_is_good = False
+            break
+        else:
+            previous_pages.append(page)
+    if entry_is_good:
+        total+=entry[int(len(entry)/2)]
+        
+print(total)
