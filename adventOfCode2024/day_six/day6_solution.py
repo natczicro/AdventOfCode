@@ -3,7 +3,10 @@ import numpy as np
 run_python_from=os.path.dirname(__file__)
 
 
+#file1 = open(os.path.join(run_python_from, 'sample.txt'),'r')
+
 file1 = open(os.path.join(run_python_from, 'input_day6.txt'),'r')
+
 linesFromFile = file1.readlines()
 
 big_list = []
