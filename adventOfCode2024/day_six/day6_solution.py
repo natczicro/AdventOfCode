@@ -31,6 +31,7 @@ def get_array_slice(starting_point, maze_array, direction):
         array_slice = maze_array[starting_point[0],:]
         
     return array_slice
+
 def x_es_created(start, end):
     list_to_return = []
     if start[0] == end[0]:
