@@ -33,13 +33,14 @@ def distance_travelled(starting_point, maze_path, direction):
     if direction == 'up':
         start = starting_point[0]
         possible_ends = np.where(maze_path=='#')[0]
-        end = np.where(possible_ends <start)
+        end_index = np.where(possible_ends <start[0])[0][-1]
+        end = possible_ends[end_index]
         if len(end) ==0:
             #guard is leaving
             next_direction='done'
             distinct_positions = start
             return _,distinct_positions,next_direction
-        end = max(end[0])
+        #end = max(end[0])
         distinct_positions = abs(start-end)-1
         next_direction='right'
         end_point=np.array([end+1,starting_point[1][0]])
@@ -85,13 +86,13 @@ def distance_travelled(starting_point, maze_path, direction):
     if direction == 'left':
         start = starting_point[1]
         possible_ends = np.where(maze_path=='#')[0]
-        end = np.where(possible_ends<start)
+        end_index = np.where(possible_ends <start[0])[0][-1]
+        end = possible_ends[end_index]
         if len(end) ==0:
             #guard is leaving
             next_direction='done'
             distinct_positions = start
             return distinct_positions,next_direction
-        end = max(end[0])
         distinct_positions = abs(start-end)-1
         next_direction='up'
         end_point=np.array([starting_point[0][0],end+1])
