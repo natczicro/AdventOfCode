@@ -3,7 +3,7 @@ import numpy as np
 run_python_from=os.path.dirname(__file__)
 
 
-file1 = open(os.path.join(run_python_from, 'sample.txt'),'r')
+file1 = open(os.path.join(run_python_from, 'input_day6.txt'),'r')
 linesFromFile = file1.readlines()
 
 big_list = []
@@ -45,11 +45,11 @@ def x_es_created(start, end):
         if start[0] < end[0]:
             #travelled down
             for i in range(end[0]-start[0]):
-                list_to_return.append(f'{start[0]+i}{start[0]}')
+                list_to_return.append(f'{start[0]+i}{start[1]}')
         if start[0] > end[0]:
             #travelled up
             for i in range(start[0]-end[0]):
-                list_to_return.append(f'{start[0]+i}{start[0]}')
+                list_to_return.append(f'{start[0]-i}{start[1]}')
     return list_to_return
 def distance_travelled(starting_point, maze_path, direction):
     if direction == 'up':
@@ -60,7 +60,7 @@ def distance_travelled(starting_point, maze_path, direction):
             #guard is leaving
             next_direction='done'
             distinct_positions = start
-            return _,distinct_positions,next_direction
+            return np.array([0,starting_point[1]]),distinct_positions,next_direction
 
         end_index = np.where(possible_ends <start)[0][-1]
         end = possible_ends[end_index]
@@ -93,7 +93,7 @@ def distance_travelled(starting_point, maze_path, direction):
             #guard is leaving
             next_direction='done'
             distinct_positions = abs(start-len(maze_path))
-            return distinct_positions,next_direction
+            return np.array([starting_point[0],len(maze_path)]),distinct_positions,next_direction
         
         end_index = np.where(possible_ends > start)[0][0]
         end = possible_ends[end_index]
@@ -110,7 +110,7 @@ def distance_travelled(starting_point, maze_path, direction):
             #guard is leaving
             next_direction='done'
             distinct_positions = start
-            return distinct_positions,next_direction
+            return np.array([starting_point[0],0]),distinct_positions,next_direction
         
         end_index = np.where(possible_ends <start)[0][-1]
         end = possible_ends[end_index]
@@ -152,4 +152,5 @@ for xs in distinct_spots_list:
 
 res = len(list(set(flat_list)))
 
+print(set(flat_list))
 print(res)
